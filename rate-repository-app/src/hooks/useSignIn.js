@@ -18,11 +18,11 @@ const useSignIn = () => {
 
   const signIn = async ({ username, password }) => {
     await mutate({ variables: { username, password }});
-    if (result.data) {
-      await authStorage.setAccessToken(result.data.authorize.accessToken);
-      apolloClient.resetStore();
-      history.push('/');
-    }
+    await result.data;
+    
+    await authStorage.setAccessToken(result.data.authorize.accessToken);
+    apolloClient.resetStore();
+    history.push('/');
   };
 
   return [ signIn, result ];

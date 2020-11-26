@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
 const LanguageTag = ({ text }) => {
   return (
     <View style={styles.container}>
-      <Text style={{color: "white"}}>{text}</Text>
+      <Text style={{color: "white"}} testID='language'>{text}</Text>
     </View>
   );
 };

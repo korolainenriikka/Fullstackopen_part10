@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Text from './Text';
 import LanguageTag from './LanguageTag';
 import RatingTag from './RatingTag';
+import Button from './Button';
+import { useHistory } from 'react-router-native';
 
 const styles = StyleSheet.create({
   container: {
@@ -30,17 +32,24 @@ const styles = StyleSheet.create({
   },
 });
 
-const RepositoryItem = ({repository}) => {
-  return (
-    <View style={styles.container}>
+const RepositoryItem = ({ showLink, handlePress, repository }) => {
+  const history = useHistory();
+
+  const showRepository = () => {
+    const id = repository.fullName.replace('/','.');
+    history.push(`/repository/${id}`);
+  };
+
+  const ItemDetails = () => (
+    <>
       <View style={styles.flexContainerTop}>
         <Image source={{ uri: repository.ownerAvatarUrl }} style={styles.image}/>
         <View style={styles.flexContainerVertical}>
-          <Text fontSize="subHeading" fontWeight="bold">
+          <Text fontSize="subHeading" fontWeight="bold" testID='fullName'>
             {repository.fullName}
           </Text>
-          <Text color="textSecondary">{repository.description}</Text>
-          <LanguageTag text={repository.language}/>
+          <Text color="textSecondary" testID='description'>{repository.description}</Text>
+          <LanguageTag text={repository.language} />
         </View>
       </View>
       <View style={styles.flexContainerBottom}>
@@ -49,8 +58,25 @@ const RepositoryItem = ({repository}) => {
         <RatingTag name={'Reviews'} value={repository.reviewCount}/>
         <RatingTag name={'Rating'} value={repository.ratingAverage}/>
       </View>
-    </View>
+    </>
   );
+
+  if (showLink) {
+    return (
+      <View style={styles.container} testID='repositoryItem'>
+        <ItemDetails />
+        <Button onPress={handlePress}>Show on GitHub</Button>
+      </View>
+    );
+  } else {
+    return (
+      <TouchableOpacity onPress={showRepository}>
+        <View style={styles.container} testID='repositoryItem'>
+          <ItemDetails />
+        </View>
+      </TouchableOpacity>
+    );
+  }
 };
 
 export default RepositoryItem;

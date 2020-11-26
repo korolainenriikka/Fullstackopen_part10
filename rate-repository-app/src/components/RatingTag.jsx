@@ -8,7 +8,7 @@ const RatingTag = ({ name, value }) => {
 
   return (
     <View style={{alignContent: "center"}}>
-      <Text fontWeight="bold">{abbreviatedValue}</Text>
+      <Text fontWeight="bold" testID={name}>{abbreviatedValue}</Text>
       <Text color="textSecondary">{name}</Text>
     </View>
   );

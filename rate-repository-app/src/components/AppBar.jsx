@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, forceUpdate } from 'react';
+import React, { useContext } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import Constants from 'expo-constants';
 import AppBarTab from './AppBarTab';
@@ -7,6 +7,7 @@ import theme from '../theme';
 import { useQuery, useApolloClient } from '@apollo/react-hooks';
 import { AUTHORIZED_USER } from '../graphql/queries';
 import AuthStorageContext from '../context/AuthStorageContext';
+import { useHistory } from 'react-router-native';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,33 +20,18 @@ const styles = StyleSheet.create({
 });
 
 const AppBar = () => {
-  // eslint-disable-next-line no-unused-vars
-  const { data, error, loading } = useQuery(AUTHORIZED_USER);
   const authStorage = useContext(AuthStorageContext);
   const apolloClient = useApolloClient();
+  const history = useHistory();
 
-  const handleSignOut = async () => {
+  // eslint-disable-next-line no-unused-vars
+  const { data, error, loading } = useQuery(AUTHORIZED_USER, {variables: {includeReviews: false}});
+  const authorizedUser = data ? data.authorizedUser : undefined;
+
+  const onSignOut = async () => {
     await authStorage.removeAccessToken();
     apolloClient.resetStore();
-  };
-
-  const renderSignInSignOut = () => {
-    if (!loading || !data || !data.authorizedUser){
-      return (
-        <AppBarTab
-            name='Sign in'
-            link="/signin"
-          />
-      );
-    } else {
-      return (
-        <AppBarTab
-            name='Sign out'
-            link=""
-            onClick={() => handleSignOut()}
-        />
-      );
-    }
+    history.push('/');
   };
 
   return (
@@ -55,7 +41,34 @@ const AppBar = () => {
           name='Repositories'
           link="/"
         />
-        {renderSignInSignOut()}
+        {authorizedUser ? (
+          <>
+            <AppBarTab
+              name="Create a review"
+              link="/createrepo"
+            />
+            <AppBarTab
+              name="My reviews"
+              link="/myreviews"
+            />
+            <AppBarTab
+              name='Sign out'
+              link=""
+              onClick={() => onSignOut()}
+            />
+          </>
+        ) : (
+          <>
+            <AppBarTab
+              name='Sign in'
+              link="/signin"
+            />
+            <AppBarTab
+              name='Sign up'
+              link="/signup"
+            />
+          </>
+        )}
       </ScrollView>
     </View>
   );  

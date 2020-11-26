@@ -24,6 +24,7 @@ const theme = {
     normal: '400',
     bold: '700',
   },
+  roundness: 6
 };
 
 export default theme;
